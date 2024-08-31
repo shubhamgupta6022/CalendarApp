@@ -1,9 +1,22 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.CalendarApp" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+    <style name="Base.Theme.CalendarApp" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+        <item name="colorPrimary">@color/light_blue</item>
+        <item name="colorPrimaryVariant">@color/dark_blue</item>
+        <item name="colorSecondary">@color/white</item>
+        <item name="android:colorBackground">@color/light_gray</item>
+        <item name="android:textColorPrimary">@color/dark_gray</item>
+        <item name="android:statusBarColor">@color/dark_blue</item>
+        <item name="android:navigationBarColor">@color/dark_blue</item>
+        <item name="fontFamily">@font/secularone_regular</item>
     </style>
 
-    <style name="Theme.CalendarApp" parent="Base.Theme.CalendarApp" />
+    <style name="Theme.CalendarApp" parent="Base.Theme.CalendarApp">
+        <item name="toolbarStyle">@style/Widget.Toolbar.Custom</item>
+    </style>
+
+    <style name="Widget.Toolbar.Custom" parent="Widget.Material3.Toolbar">
+        <item name="android:background">@color/dark_blue</item>
+        <item name="titleTextColor">@color/white</item>
+        <item name="subtitleTextColor">@color/light_gray</item>
+    </style>
 </resources>
