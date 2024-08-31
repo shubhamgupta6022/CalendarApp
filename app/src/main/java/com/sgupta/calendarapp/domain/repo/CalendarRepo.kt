@@ -14,5 +14,8 @@ interface CalendarRepo {
 
     suspend fun getCalendarTasksLists(userId: Int): Flow<Resource<CalendarTaskResponse>>
 
-    suspend fun deleteCalendarTask(taskId: Int)
+    suspend fun deleteCalendarTask(
+        userId: Int,
+        taskId: Int,
+    ): Flow<Resource<ApiResponse>>
 }

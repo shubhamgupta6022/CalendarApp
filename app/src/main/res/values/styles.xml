@@ -11,7 +11,6 @@
     <style name="Typography.HelpText1" parent="TextAppearance.AppCompat">
         <item name="android:textColor">@color/dark_gray</item>
         <item name="android:textSize">12sp</item>
-        <item name="android:lineHeight" tools:targetApi="p">16dp</item>
         <item name="android:fontFamily">@font/manrope_regular</item>
         <item name="fontFamily">@font/manrope_regular</item>
     </style>
@@ -19,7 +18,13 @@
     <style name="Typography.HelpText2" parent="TextAppearance.AppCompat">
         <item name="android:textColor">@color/black</item>
         <item name="android:textSize">14sp</item>
-        <item name="android:lineHeight" tools:targetApi="p">20dp</item>
+        <item name="android:fontFamily">@font/manrope_regular</item>
+        <item name="fontFamily">@font/manrope_regular</item>
+    </style>
+
+    <style name="Typography.HelpText3" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">18sp</item>
         <item name="android:fontFamily">@font/manrope_regular</item>
         <item name="fontFamily">@font/manrope_regular</item>
     </style>

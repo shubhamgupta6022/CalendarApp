@@ -4,11 +4,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sgupta.calendarapp.core.Resource
 import com.sgupta.calendarapp.core.delegator.DelegateAdapterItem
+import com.sgupta.calendarapp.data.model.DeleteCalendarTaskRequest
+import com.sgupta.calendarapp.domain.usecase.DeleteCalendarTaskUseCase
 import com.sgupta.calendarapp.domain.usecase.GetCalendarTasksUseCase
 import com.sgupta.calendarapp.domain.usecase.SubmitCalendarTaskUseCase
 import com.sgupta.calendarapp.feature.mapper.TaskListUiModelMapper
 import com.sgupta.calendarapp.feature.mapper.TaskUiModelMapper
 import com.sgupta.calendarapp.feature.states.CalendarTaskState
+import com.sgupta.calendarapp.feature.uimodel.TaskUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -22,6 +25,7 @@ class CalendarListModel
     constructor(
         private val submitCalendarTaskUseCase: SubmitCalendarTaskUseCase,
         private val getCalendarTasksUseCase: GetCalendarTasksUseCase,
+        private val deleteCalendarTaskUseCase: DeleteCalendarTaskUseCase,
         private val taskUiModelMapper: TaskUiModelMapper,
         private val taskListUiModelMapper: TaskListUiModelMapper
     ) : ViewModel() {
@@ -81,4 +85,21 @@ class CalendarListModel
                     }
                 }.launchIn(viewModelScope)
         }
+
+        fun deleteCalendarTasks(userId: Int, taskId: Int) {
+            deleteCalendarTaskUseCase.invoke(DeleteCalendarTaskUseCase.Param(userId, taskId))
+                .onEach {
+                    when(it) {
+                        is Resource.Success -> {
+                            taskUiModel.filter { (it as TaskUiModel).taskId == taskId }
+                            _uiStates.emit(CalendarTaskState.OnTaskAdded(taskUiModel))
+                        }
+                        is Resource.Error -> {
+
+                        }
+                    }
+                }
+                .launchIn(viewModelScope)
+        }
+
     }

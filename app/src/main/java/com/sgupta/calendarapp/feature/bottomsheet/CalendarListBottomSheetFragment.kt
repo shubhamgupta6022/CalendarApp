@@ -12,6 +12,7 @@ import com.sgupta.calendarapp.core.delegator.CompositeAdapter
 import com.sgupta.calendarapp.databinding.FragmentCalendarListBottomSheetBinding
 import com.sgupta.calendarapp.feature.adapter.CalendarListDelegateAdapter
 import com.sgupta.calendarapp.feature.dialog.AlertDialogUtil
+import com.sgupta.calendarapp.feature.states.CalendarTaskAdapterState
 import com.sgupta.calendarapp.feature.states.CalendarTaskState
 import com.sgupta.calendarapp.feature.viewmodel.CalendarListModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -60,19 +61,30 @@ class CalendarListBottomSheetFragment : BottomSheetDialogFragment() {
     ) {
         initViews()
         initObservers()
+        initAdapterStates()
         userId?.let { viewModel.getCalendarTasksList(it) }
+    }
+
+    private fun initAdapterStates() {
+        calendarListDelegateAdapter.uiStates
+            .onEach {
+                when (it) {
+                    is CalendarTaskAdapterState.OnDeleteClicked -> {
+                        openDeleteTaskDialog(it.taskId)
+                    }
+                }
+            }.launchIn(lifecycleScope)
     }
 
     private fun initObservers() {
         viewModel.uiState
             .onEach {
-                when(it) {
+                when (it) {
                     is CalendarTaskState.OnTaskAdded -> {
                         compositeAdapter.submitList(it.data)
                     }
                 }
-            }
-            .launchIn(lifecycleScope)
+            }.launchIn(lifecycleScope)
     }
 
     private fun initViews() {
@@ -93,6 +105,14 @@ class CalendarListBottomSheetFragment : BottomSheetDialogFragment() {
         activity?.let {
             AlertDialogUtil.createAlertDialog(it) { title, description ->
                 viewModel.submitCalendarTask(userId ?: 0, title, description)
+            }
+        }
+    }
+
+    private fun openDeleteTaskDialog(taskId: Int) {
+        activity?.let { activity ->
+            AlertDialogUtil.createDeleteTaskDialog(context = activity) {
+                viewModel.deleteCalendarTasks(userId ?: 0, taskId)
             }
         }
     }
