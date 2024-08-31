@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.onEach
 @AndroidEntryPoint
 class CalendarActivity : AppCompatActivity() {
     private lateinit var binding: ActivityCalendarBinding
-    private val calendarActivitySharedViewModel : CalendarActivitySharedViewModel by viewModels()
+    private val calendarActivitySharedViewModel: CalendarActivitySharedViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,17 +28,18 @@ class CalendarActivity : AppCompatActivity() {
     private fun initObservers() {
         calendarActivitySharedViewModel.uiStates
             .onEach {
-                when(it) {
+                when (it) {
                     CalendarViewPagerState.OnLeftArrowClicked -> {
                         binding.viewPager.currentItem -= 1
+                        (binding.viewPager.adapter as? CalendarPagerAdapter)?.notifyDataSetChanged()
                     }
 
                     CalendarViewPagerState.OnRightArrowClicked -> {
                         binding.viewPager.currentItem += 1
+                        (binding.viewPager.adapter as? CalendarPagerAdapter)?.notifyDataSetChanged()
                     }
                 }
-            }
-            .launchIn(lifecycleScope)
+            }.launchIn(lifecycleScope)
     }
 
     private fun initViews() {

@@ -1,6 +1,7 @@
 package com.sgupta.calendarapp.feature.fragment
 
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -137,6 +138,7 @@ class CalendarFragment : Fragment() {
     }
 
     private fun openBottomSheet(userId: Int) {
+        Log.d("Shubham-Test", "fragment = $this, activity = $activity")
         val bottomSheet = CalendarListBottomSheetFragment.newInstance(userId)
         activity
             ?.supportFragmentManager
