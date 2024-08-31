@@ -5,24 +5,45 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <ImageView
+        android:id="@+id/iv_arrow_left"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="16dp"
+        android:src="@drawable/ic_arrow_left"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_month_year"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tv_month_year" />
+
     <TextView
         android:id="@+id/tv_month_year"
         style="@style/Typography.Heading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="4dp"
         android:layout_marginTop="16dp"
         android:textSize="18sp"
         android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/iv_arrow_right"
+        app:layout_constraintStart_toEndOf="@+id/iv_arrow_left"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="August 2024" />
+
+    <ImageView
+        android:id="@+id/iv_arrow_right"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginEnd="16dp"
+        android:src="@drawable/ic_arrow_right"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_month_year"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tv_month_year" />
 
     <GridLayout
         android:id="@+id/grid_weekdays"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="20dp"
         android:columnCount="7"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

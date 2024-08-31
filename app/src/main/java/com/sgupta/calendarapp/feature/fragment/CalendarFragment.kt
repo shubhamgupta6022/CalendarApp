@@ -9,9 +9,11 @@ import android.widget.GridLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import com.sgupta.calendarapp.R
 import com.sgupta.calendarapp.databinding.FragmentCalendarBinding
 import com.sgupta.calendarapp.feature.bottomsheet.CalendarListBottomSheetFragment
+import com.sgupta.calendarapp.feature.viewmodel.CalendarActivitySharedViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -19,12 +21,10 @@ import java.util.Locale
 
 @AndroidEntryPoint
 class CalendarFragment : Fragment() {
-    private var _binding: FragmentCalendarBinding? = null
-    private val binding get() = _binding!!
-
+    private lateinit var binding: FragmentCalendarBinding
     private var monthOffset: Int = 0
-
     private val calendar by lazy { Calendar.getInstance() }
+    private val calendarActivitySharedViewModel: CalendarActivitySharedViewModel by activityViewModels()
 
     companion object {
         private const val ARG_MONTH_OFFSET = "month_offset"
@@ -43,7 +43,7 @@ class CalendarFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        _binding = FragmentCalendarBinding.inflate(inflater, container, false)
+        binding = FragmentCalendarBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -69,6 +69,13 @@ class CalendarFragment : Fragment() {
         setUpMonthYear()
         setupWeekdaysGrid()
         setUpDatesGrid()
+
+        binding.ivArrowLeft.setOnClickListener {
+            calendarActivitySharedViewModel.leftArrowClicked()
+        }
+        binding.ivArrowRight.setOnClickListener {
+            calendarActivitySharedViewModel.rightArrowClicked()
+        }
     }
 
     private fun setUpMonthYear() {
@@ -82,11 +89,9 @@ class CalendarFragment : Fragment() {
 
         var selectedDayView: TextView? = null
 
-        // Get the first day of the month and total days in the month
         val firstDayOfMonth = calendar.get(Calendar.DAY_OF_WEEK)
         val daysInMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH)
 
-        // Fill the grid with blank spaces until the first day of the month
         for (i in 1 until firstDayOfMonth) {
             val emptyView =
                 TextView(context).apply {
@@ -100,7 +105,6 @@ class CalendarFragment : Fragment() {
             daysGrid.addView(emptyView)
         }
 
-        // Fill the grid with day numbers
         for (day in 1..daysInMonth) {
             val dayView =
                 TextView(context).apply {
@@ -115,14 +119,11 @@ class CalendarFragment : Fragment() {
                         }
                     setPadding(16, 16, 16, 16)
 
-                    // Set click listener for each day
                     setOnClickListener {
-                        // Unmark the previously selected day if any
                         selectedDayView?.apply {
                             background = null
                         }
 
-                        // Mark the current day as selected
                         background =
                             ContextCompat.getDrawable(context, R.drawable.circle_background)
                         selectedDayView = this
@@ -168,10 +169,5 @@ class CalendarFragment : Fragment() {
                 }
             binding.gridWeekdays.addView(dayView)
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 }
