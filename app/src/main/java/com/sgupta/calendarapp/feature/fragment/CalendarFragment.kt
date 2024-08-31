@@ -1,19 +1,23 @@
 package com.sgupta.calendarapp.feature.fragment
 
 import android.os.Bundle
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.GridLayout
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import com.sgupta.calendarapp.R
 import com.sgupta.calendarapp.databinding.FragmentCalendarBinding
+import com.sgupta.calendarapp.feature.bottomsheet.CalendarListBottomSheetFragment
+import dagger.hilt.android.AndroidEntryPoint
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
+@AndroidEntryPoint
 class CalendarFragment : Fragment() {
     private var _binding: FragmentCalendarBinding? = null
     private val binding get() = _binding!!
@@ -76,7 +80,9 @@ class CalendarFragment : Fragment() {
         val daysGrid = binding.gridDates
         daysGrid.removeAllViews()
 
-        // Get first day of the month and total days in the month
+        var selectedDayView: TextView? = null
+
+        // Get the first day of the month and total days in the month
         val firstDayOfMonth = calendar.get(Calendar.DAY_OF_WEEK)
         val daysInMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH)
 
@@ -100,6 +106,7 @@ class CalendarFragment : Fragment() {
                 TextView(context).apply {
                     text = day.toString()
                     gravity = Gravity.CENTER
+                    setTextAppearance(R.style.Typography_HelpText1)
                     layoutParams =
                         GridLayout.LayoutParams().apply {
                             width = 0
@@ -110,15 +117,38 @@ class CalendarFragment : Fragment() {
 
                     // Set click listener for each day
                     setOnClickListener {
-                        val clickedDate = calendar.clone() as Calendar
-                        clickedDate.set(Calendar.DAY_OF_MONTH, day)
-                        val format = SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault())
-                        val dateString = format.format(clickedDate.time)
-                        Log.d("CalendarFragment", "Clicked date: $dateString")
+                        // Unmark the previously selected day if any
+                        selectedDayView?.apply {
+                            background = null
+                        }
+
+                        // Mark the current day as selected
+                        background =
+                            ContextCompat.getDrawable(context, R.drawable.circle_background)
+                        selectedDayView = this
+
+                        val userId = generateUserId(day)
+                        openBottomSheet(userId)
                     }
                 }
             daysGrid.addView(dayView)
         }
+    }
+
+    private fun openBottomSheet(userId: Int) {
+        val bottomSheet = CalendarListBottomSheetFragment.newInstance(userId)
+        activity
+            ?.supportFragmentManager
+            ?.beginTransaction()
+            ?.replace(binding.bottomLayout.id, bottomSheet)
+            ?.commit()
+    }
+
+    private fun generateUserId(day: Int): Int {
+        val clickedDate = calendar.clone() as Calendar
+        clickedDate.set(Calendar.DAY_OF_MONTH, day)
+        val format = SimpleDateFormat("yyyyMMdd", Locale.getDefault())
+        return format.format(clickedDate.time).toInt()
     }
 
     private fun setupWeekdaysGrid() {
@@ -128,6 +158,7 @@ class CalendarFragment : Fragment() {
                 TextView(context).apply {
                     text = day
                     gravity = Gravity.CENTER
+                    setTextAppearance(R.style.Typography_HelpText2)
                     layoutParams =
                         GridLayout.LayoutParams().apply {
                             width = 0

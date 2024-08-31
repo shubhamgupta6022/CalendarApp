@@ -1,14 +1,20 @@
 package com.sgupta.calendarapp.data.remote
 
-import com.sgupta.calendarapp.data.model.TaskModel
+import com.sgupta.calendarapp.data.model.ApiResponse
+import com.sgupta.calendarapp.data.model.CalendarTaskResponse
+import com.sgupta.calendarapp.data.model.StoreTaskRequest
+import com.sgupta.calendarapp.data.model.UserIdRequest
+import retrofit2.Response
+import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.Query
 
 interface CalendarApiService {
 
-    @GET("/api/storeCalendarTask")
-    suspend fun storeCalendarTask(@Query("user_id") userId: Int, @Query("task") task: TaskModel)
+    @POST("/api/storeCalendarTask")
+    suspend fun storeCalendarTask(@Body request: StoreTaskRequest) : Response<ApiResponse>
 
-    @GET("/api/getCalendarTaskLists")
-    suspend fun getCalendarTaskLists(@Query("user_id") userId: Int)
+    @POST("/api/getCalendarTaskList")
+    suspend fun getCalendarTaskLists(@Body request: UserIdRequest) : Response<CalendarTaskResponse>
 }
