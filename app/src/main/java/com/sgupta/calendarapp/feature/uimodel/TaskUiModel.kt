@@ -15,13 +15,13 @@ data class TaskUiModel(
     inner class Content(
         val taskId: Int,
     ) {
-        override fun equals(other: Any?): Boolean {
-            if (other is Content) {
-                return taskId == other.taskId
-            }
-            return false
-        }
-
-        override fun hashCode(): Int = 32 * Objects.hash(taskId)
+//        override fun equals(other: Any?): Boolean {
+//            if (other is Content) {
+//                return taskId == other.taskId
+//            }
+//            return false
+//        }
+//
+//        override fun hashCode(): Int = 32 * Objects.hash(taskId)
     }
 }
