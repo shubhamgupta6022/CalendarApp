@@ -1,7 +1,6 @@
 package com.sgupta.calendarapp.feature.fragment
 
 import android.os.Bundle
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -11,10 +10,12 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import com.sgupta.calendarapp.R
 import com.sgupta.calendarapp.databinding.FragmentCalendarBinding
 import com.sgupta.calendarapp.feature.bottomsheet.CalendarListBottomSheetFragment
 import com.sgupta.calendarapp.feature.viewmodel.CalendarActivitySharedViewModel
+import com.sgupta.calendarapp.feature.viewmodel.CalendarViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -26,6 +27,7 @@ class CalendarFragment : Fragment() {
     private var monthOffset: Int = 0
     private val calendar by lazy { Calendar.getInstance() }
     private val calendarActivitySharedViewModel: CalendarActivitySharedViewModel by activityViewModels()
+    private val calendarViewModel: CalendarViewModel by viewModels()
 
     companion object {
         private const val ARG_MONTH_OFFSET = "month_offset"
@@ -52,9 +54,31 @@ class CalendarFragment : Fragment() {
         view: View,
         savedInstanceState: Bundle?,
     ) {
-        super.onViewCreated(view, savedInstanceState)
         getArgs()
         initViews()
+        initObservers()
+    }
+
+    private fun initObservers() {
+        calendarViewModel.selectedDay.observe(viewLifecycleOwner) { selectedDay ->
+            selectedDay?.let {
+                val dayView = findDayView(it)
+                dayView?.let { view ->
+                    view.background = ContextCompat.getDrawable(requireContext(), R.drawable.circle_background)
+                    openBottomSheet(generateUserId(it))
+                }
+            }
+        }
+    }
+
+    private fun findDayView(day: Int): TextView? {
+        for (i in 0 until binding.gridDates.childCount) {
+            val view = binding.gridDates.getChildAt(i)
+            if (view is TextView && view.text.toString().toIntOrNull() == day) {
+                return view
+            }
+        }
+        return null
     }
 
     private fun getArgs() {
@@ -131,6 +155,8 @@ class CalendarFragment : Fragment() {
 
                         val userId = generateUserId(day)
                         openBottomSheet(userId)
+
+                        calendarViewModel.setSelectedDay(day)
                     }
                 }
             daysGrid.addView(dayView)
@@ -138,7 +164,6 @@ class CalendarFragment : Fragment() {
     }
 
     private fun openBottomSheet(userId: Int) {
-        Log.d("Shubham-Test", "fragment = $this, activity = $activity")
         val bottomSheet = CalendarListBottomSheetFragment.newInstance(userId)
         activity
             ?.supportFragmentManager
